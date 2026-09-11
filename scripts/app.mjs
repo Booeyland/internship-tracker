@@ -59,14 +59,41 @@ export function checkNode() {
   return false;
 }
 
-/** Runs npm without a shell, so paths containing spaces are safe. */
+/**
+ * Finds npm's JavaScript entry point so it can be run with `node` directly.
+ *
+ * This sidesteps two Windows problems at once: PowerShell refuses to run
+ * npm.ps1 under the default execution policy (a machine security setting
+ * nobody should be asked to weaken), and Node refuses to spawn npm.cmd without
+ * a shell. Running the .js file avoids both shims entirely.
+ */
+function findNpmCli() {
+  const candidates = [
+    process.env.npm_execpath,
+    path.join(path.dirname(process.execPath), "node_modules", "npm", "bin", "npm-cli.js"),
+    path.join(path.dirname(process.execPath), "..", "lib", "node_modules", "npm", "bin", "npm-cli.js"),
+  ];
+  return candidates.find((candidate) => candidate?.endsWith(".js") && fs.existsSync(candidate)) ?? null;
+}
+
 function runNpm(args) {
-  // npm sets npm_execpath when it runs a script, which avoids guessing where
-  // npm lives. The shell fallback only matters if this is invoked directly.
-  const execPath = process.env.npm_execpath;
-  const result = execPath
-    ? spawnSync(process.execPath, [execPath, ...args], { cwd: ROOT, stdio: "inherit" })
-    : spawnSync("npm", args, { cwd: ROOT, stdio: "inherit", shell: process.platform === "win32" });
+  const cli = findNpmCli();
+  if (cli) {
+    const result = spawnSync(process.execPath, [cli, ...args], { cwd: ROOT, stdio: "inherit" });
+    return result.status === 0;
+  }
+
+  // Last resort: go through the shell. The arguments are fixed literals below,
+  // so there is nothing user-supplied to escape.
+  const result = spawnSync(process.platform === "win32" ? "npm.cmd" : "npm", args, {
+    cwd: ROOT,
+    stdio: "inherit",
+    shell: true,
+  });
+  if (result.error) {
+    ui.fail("Could not find npm. Install Node.js from https://nodejs.org and try again.");
+    return false;
+  }
   return result.status === 0;
 }
 

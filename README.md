@@ -3,16 +3,19 @@
 A recruiting command center for internship applications: pipeline, interviews, follow-ups and
 analytics that tell you which strategies are actually working.
 
-## Install — one command, once
+## Install
 
-You need [Node.js](https://nodejs.org) 24 or newer. Then, from this folder:
+You need [Node.js](https://nodejs.org) 24 or newer. Then **double-click `Setup`** in this folder —
+`Setup.cmd` on Windows, `Setup.command` on Mac. No terminal required.
+
+If you would rather use a terminal, this does the same thing:
 
 ```bash
 npm run setup
 ```
 
-That installs everything, builds the app, puts an **Internship Tracker** shortcut on your desktop,
-and opens the tracker in your browser.
+Either way it installs everything, builds the app, puts an **Internship Tracker** shortcut on your
+desktop, and opens the tracker in your browser.
 
 **After that you never need a terminal again:**
 
