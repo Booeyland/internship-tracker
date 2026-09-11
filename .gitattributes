@@ -1,0 +1,9 @@
+# Normalise line endings so the repo is identical on Windows, macOS and Linux.
+* text=auto eol=lf
+
+# Windows launchers need CRLF to run reliably.
+*.cmd text eol=crlf
+
+# Shell launchers must keep LF or bash fails on the carriage returns.
+*.command text eol=lf
+*.sh text eol=lf

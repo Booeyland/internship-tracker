@@ -1,0 +1,15 @@
+node_modules
+.next
+out
+data/*.db
+data/*.db-*
+.env*.local
+*.tsbuildinfo
+next-env.d.ts
+
+# Generated per-machine by `npm run setup`
+/Internship Tracker.cmd
+/Stop Internship Tracker.cmd
+/Internship Tracker.command
+/Stop Internship Tracker.command
+data/.server.pid
